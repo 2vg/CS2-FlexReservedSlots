@@ -1,64 +1,271 @@
 <p align="center">
-<b>Reseved Slots</b> is a CS2 plugin that is used to reserve slots for VIP players or Admins.<br>
-Designed for <a href="https://github.com/roflmuffin/CounterStrikeSharp">CounterStrikeSharp</a> framework<br>
-<br>
-<a href="https://buymeacoffee.com/sourcefactory">
-<img src="https://img.buymeacoffee.com/button-api/?text=Support Me&emoji=🚀&slug=sourcefactory&button_colour=e6005c&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00" />
-</a>
+  <b>Flex Reserved Slots</b> is a CS2 plugin that is used to reserve slots for VIP players or Admins,<br>
+  <b>And we can do now more Flexible configuration!</b><br>
+  Designed for <a href="https://github.com/roflmuffin/CounterStrikeSharp">CounterStrikeSharp</a> framework<br>
+  Original was made by <a href="https://github.com/NockyCZ/CS2-ReservedSlots">NockyCZ/CS2-ReservedSlots</a> ♡<br>
 </p>
 
-### Discord Support Server
-[<img src="https://discordapp.com/api/guilds/1149315368465211493/widget.png?style=banner2">](https://discord.gg/Tzmq98gwqF)
+> **Note**:  
+> This plugin Version 2.0.0 is not backward compatible with NockyCZ's versions. You will need to update your configuration file to the new format.  
+> And from this version, No longer supported Discord now.  
 
 ### Installation
-1. Download the lastest release https://github.com/NockyCZ/CS2-ReservedSlots/releases/latest
-   - `ReservedSlots.zip` file is a version that does not support Discord Utilities
-   - `ReservedSlots_DU_Support.zip` file is a version that supports Discord Utilities (You can combine flags and discord roles)
-3. Unzip into your servers `csgo/addons/counterstrikesharp/plugins/` dir
-4. Restart the server
-
-### Dependencies
-- [CS2 Discord Utilities](https://github.com/NockyCZ/CS2-Discord-Utilities) (Only if you want to use a version thats supports Discord Utilities)
+1. Download the lastest release https://github.com/2vg/CS2-FlexReservedSlots/releases/latest
+2. Unzip into your servers `csgo/addons/counterstrikesharp/plugins/` dir
+3. Restart the server
 
 ## Configuration
-```configs/plugins/ReservedSlots/ReservedSlots.json```
+```configs/plugins/FlexReservedSlots/FlexReservedSlots.json```
 
-||| What it does |
-| ------------- | ------------- | ------------- |
-| **Reserved Slots**| Plugin version that does not support Discord Utilities | |
-|| `Reserved Flags` | **• List of Flags for reserved slot**<br>- Cannot be empty! ||
-|| `Reserved Admin Flags` | **• List of Flags for admin reserved slot** <br>- When a player with an Admin reserved slot joins, no one is kicked<br>- Can be empty||
-||||
-| **Reserved Slots (With Discord Utilities Support)** | Plugin version that supports Discord Utilities | |
-|| `Reserved Flags and Roles` | **• List of Flags and Discord Roles for reserved slot**<br>- You can combine roles and flags (If a player does not have a role, his flags will be checked)<br>- Cannot be empty!  ||
-|| `Reserved Admin Flags and Roles` | **• List of Flags and Discord Roles for admin reserved slot**<br>- When a player with an Admin reserved slot joins, no one is kicked<br>- You can combine roles and flags (If a player does not have a role, his flags will be checked)<br>- Can be empty!||
-#
-<br>
+### New in v2.0.0
 
-|   | What it does |
-| ------------- | ------------- |
-| `Reserved Slots`| How many slots will be reserved if the reserved slots method is 1 or 2 |
+Version 2.0.0 introduces a completely redesigned Reserved Slots system with the following features:
+
+1. **Multiple Flag Sets**: Define different sets of flags with varying priority levels
+2. **Slot Configurations**: Configure multiple slot types with different flag sets
+3. **Map and Event-based Activation**: Enable/disable slots based on specific maps or like while an event
+4. **Priority System**: Players with higher priority are less likely to be kicked
+5. **Always Immune**: Flag sets can be set to never be kicked
+6. **Dynamic Configuration via ConVars**: Change some settings on-the-fly without editing config files
+
+### Configuration Format
+
+<details>
+
+<summary>Click to view</summary>
+
+```json
+{
+  "Flag Sets": [
+    {
+      "Name": "Admin",
+      "Flags": ["@css/ban", "@css/admin"],
+      "Priority": 100,
+      "AlwaysImmune": true
+    },
+    {
+      "Name": "VIPTier1",
+      "Flags": ["@css/vip_tier1"],
+      "Priority": 50,
+      "AlwaysImmune": false
+    },
+    {
+      "Name": "VIPTier2",
+      "Flags": ["@css/vip_tier2"],
+      "Priority": 30,
+      "AlwaysImmune": false
+    }
+  ],
+  "Slot Configurations": [
+    {
+      "FlagSetName": "Admin",
+      "SlotCount": 1
+    },
+    {
+      "FlagSetName": "VIPTier1",
+      "SlotCount": 3,
+      "DisabledMaps": ["de_dust2_event"]
+    },
+    {
+      "FlagSetName": "VIPTier2",
+      "SlotCount": 5,
+      "EnabledMaps": ["de_dust2", "de_mirage", "de_inferno"],
+      "DisabledEvents": ["tournament"]
+    }
+  ],
+  "Reserved Slots Method": 0,
+  "Leave One Slot Open": false,
+  "Kick Reason": 135,
+  "Kick Delay": 5,
+  "Kick Check Method": 0,
+  "Kick Type": 0,
+  "Kick Players In Spectate": true,
+  "Log Kicked Players": true,
+  "Display Kicked Players Message": 2
+}
+```
+
+</details>
+
+### Configuration Options
+
+#### Flag Sets
+
+| Option | Description |
+|--------|-------------|
+| `Name` | Unique name for the flag set |
+| `Flags` | List of flags that belong to this set |
+| `Priority` | Priority level (higher number = higher priority) |
+| `AlwaysImmune` | If true, players with these flags will never be kicked |
+
+#### Slot Configurations
+
+| Option | Description |
+|--------|-------------|
+| `FlagSetName` | Name of the flag set this slot configuration uses |
+| `SlotCount` | Number of slots reserved for this configuration |
+| `EnabledMaps` | List of maps where this slot is enabled (empty = all maps) |
+| `DisabledMaps` | List of maps where this slot is disabled |
+| `EnabledEvents` | List of events where this slot is enabled (empty = all events) |
+| `DisabledEvents` | List of events where this slot is disabled |
+
+#### General Options
+
+| Option | Description |
+|--------|-------------|
 | `Reserved Slots Method` | `0` - There will always be one slot open. For example, if your maxplayers is set to 10, the server can have a maximum of 9 players. If a 10th player joins with a Reservation flag/role, it will kick a player based on the Kick type. If the 10th player doesn't have a reservation flag/role, they will be kicked |
-||`1` - Maintains the number of available slots according to the reservation slots setting, allowing only players with a Reservation flag/role to join. For example, if you have maxplayers set to 10 and Reserved slots set to 3, when there are 7/10 players on the server, additional players can only join if they have a Reservation flag/role. If they don't, they will be kicked. If the server is already full and a player with a Reservation flag/role attempts to join, it will kick a player based on the Kick type |
-||`2` - It works the same way as in method 2, except players with a Reservation flag/role are not counted towards the total player count. For example, if there are 7/10 players on the server, and Reserved slots are set to 3. Out of those 7 players, two players have a Reservation flag/role. The plugin will then consider that there are 5 players on the server, allowing two more players without a Reservation flag/role to connect. If the server is already full and a player with a Reservation flag/role attempts to join, it will kick a player based on the  Kick type |
+| | `1` - Maintains the number of available slots according to the reservation slots setting, allowing only players with a Reservation flag/role to join. For example, if you have maxplayers set to 10 and Reserved slots set to 3, when there are 7/10 players on the server, additional players can only join if they have a Reservation flag/role. If they don't, they will be kicked. If the server is already full and a player with a Reservation flag/role attempts to join, it will kick a player based on the Kick type |
+| | `2` - It works the same way as in method 2, except players with a Reservation flag/role are not counted towards the total player count. For example, if there are 7/10 players on the server, and Reserved slots are set to 3. Out of those 7 players, two players have a Reservation flag/role. The plugin will then consider that there are 5 players on the server, allowing two more players without a Reservation flag/role to connect. If the server is already full and a player with a Reservation flag/role attempts to join, it will kick a player based on the Kick type |
 | `Leave One Slot Open` | Works only if reserved slots method is set to 1 or 2. If set to `true`, there will always be one slot open. (`true` or `false`) |
-| `Kick Immunity Type`  | Who will be immune to the kick? |
-||`0` - Players with a Reserved flag/role or an Admin reserved flag/role |
-||`1` - Only players with a Reserved flag/role|
-||`2` - Only players with an Admin reserved flag/role|
 | `Kick Reason` | Reason for the kick (Use the number from [NetworkDisconnectionReason](https://docs.cssharp.dev/api/CounterStrikeSharp.API.ValveConstants.Protobuf.NetworkDisconnectionReason.html?q=NetworkDisconnectionReason)) |
-| `Kick Delay` | This means that the player will be kicked after a certain time (`seconds`) (value less than 1 means the player will be kicked immediately)|
-| `Kick Check Method`  | When a player will be selected for kick when a player with a Reserved flag/role joins?? |
-||`0` - When a player with a Reserved flag/role joins |
-||`1` - When a player with a Reserved flag/role choose a team|
+| `Kick Delay` | This means that the player will be kicked after a certain time (`seconds`) (value less than 1 means the player will be kicked immediately) |
+| `Kick Check Method` | When a player will be selected for kick when a player with a Reserved flag/role joins? |
+| | `0` - When a player with a Reserved flag/role joins |
+| | `1` - When a player with a Reserved flag/role choose a team |
 | `Kick Type` | How is a players selected to be kicked? |
-||`0` - Players will be kicked randomly |
-||`1` -  Players will be kicked by highest ping|
-||`2` -  Players will be kicked by highest score|
-||`3` -  Players will be kicked by lowest score|
+| | `0` - Players will be kicked randomly |
+| | `1` - Players will be kicked by highest ping |
+| | `2` - Players will be kicked by highest score |
+| | `3` - Players will be kicked by lowest score |
 | `Kick Players In Spectate` | Kick players who are in spectate first? (`true` or `false`) |
 | `Log Kicked Players` | (`true` or `false`) |
 | `Display Kicked Players Message` | Who will see the message when a player is kicked due to a reserved slot |
-||`0` - None |
-||`1` - All players|
-||`2` - Only Admins with the `@css/generic` flag|
+| | `0` - None |
+| | `1` - All players |
+| | `2` - Only Admins with the `@css/generic` flag |
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `css_event <event_name>` | Set the current event (e.g., "tournament") |
+| `css_event none` | Clear the current event |
+| `css_rs_status` | Show the status of all slot configurations |
+
+### ConVar Integration
+
+The plugin exposes ConVars that can be modified by other plugins or through the server console:
+
+| ConVar | Description |
+|--------|-------------|
+| `css_rs_current_event` | Current event name |
+| `css_rs_slot_<name>_enabled` | Enable/disable a slot configuration (1=enabled, 0=disabled) |
+| `css_rs_slot_<name>_maps` | Comma-separated list of maps where the slot is enabled |
+| `css_rs_slot_<name>_disabled_maps` | Comma-separated list of maps where the slot is disabled |
+| `css_rs_slot_<name>_events` | Comma-separated list of events where the slot is enabled |
+| `css_rs_slot_<name>_disabled_events` | Comma-separated list of events where the slot is disabled |
+
+### Examples
+
+#### Basic Configuration
+reservedFlags
+
+<details>
+
+<summary>Click to view</summary>
+
+```json
+{
+  "Flag Sets": [
+    {
+      "Name": "Admin",
+      "Flags": ["@css/ban", "@css/admin"],
+      "Priority": 100,
+      "AlwaysImmune": true
+    },
+    {
+      "Name": "VIP",
+      "Flags": ["@css/vip"],
+      "Priority": 50,
+      "AlwaysImmune": false
+    }
+  ],
+  "Slot Configurations": [
+    {
+      "FlagSetName": "Admin",
+      "SlotCount": 2
+    },
+    {
+      "FlagSetName": "VIP",
+      "SlotCount": 3
+    }
+  ],
+  "Reserved Slots Method": 1,
+  "Leave One Slot Open": true
+}
+```
+
+</details>
+
+#### Advanced Configuration with Map and Event Restrictions
+
+<details>
+
+<summary>Click to view</summary>
+
+```json
+{
+  "Flag Sets": [
+    {
+      "Name": "Admin",
+      "Flags": ["@css/ban", "@css/admin"],
+      "Priority": 100,
+      "AlwaysImmune": true
+    },
+    {
+      "Name": "VIPGold",
+      "Flags": ["@css/vip_gold"],
+      "Priority": 80,
+      "AlwaysImmune": false
+    },
+    {
+      "Name": "VIPSilver",
+      "Flags": ["@css/vip_silver"],
+      "Priority": 50,
+      "AlwaysImmune": false
+    },
+    {
+      "Name": "VIPBronze",
+      "Flags": ["@css/vip_bronze"],
+      "Priority": 30,
+      "AlwaysImmune": false
+    }
+  ],
+  "Slot Configurations": [
+    {
+      "FlagSetName": "Admin",
+      "SlotCount": 2
+    },
+    {
+      "FlagSetName": "VIPGold",
+      "SlotCount": 3,
+      "DisabledEvents": ["tournament"]
+    },
+    {
+      "FlagSetName": "VIPSilver",
+      "SlotCount": 5,
+      "EnabledMaps": ["de_dust2", "de_mirage", "de_inferno"]
+    },
+    {
+      "FlagSetName": "VIPBronze",
+      "SlotCount": 2,
+      "EnabledMaps": ["de_dust2", "de_mirage"],
+      "DisabledEvents": ["tournament", "special_event"]
+    }
+  ],
+  "Reserved Slots Method": 2,
+  "Leave One Slot Open": true,
+  "Kick Type": 1,
+  "Kick Players In Spectate": true
+}
+```
+
+</details>
+
+### Supported Languages
+
+The plugin currently supports the following languages:
+- English (en.json)
+- Portuguese-Brazil (pt-BR.json)
+
+You can contribute additional translations by adding new language files to the `lang/` directory.
