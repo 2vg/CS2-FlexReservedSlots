@@ -5,9 +5,15 @@
   Original was made by <a href="https://github.com/NockyCZ/CS2-ReservedSlots">NockyCZ/CS2-ReservedSlots</a> ♡<br>
 </p>
 
-> **Note**:  
+> [!NOTE]:
 > This plugin Version 2.0.0 is not backward compatible with NockyCZ's versions. You will need to update your configuration file to the new format.  
 > And from this version, No longer supported Discord now.  
+
+> [!CAUTION]
+> Not yet fully tested, use with caution.
+
+> [!WARNING]
+> There is no release yet.
 
 ### Installation
 1. Download the lastest release https://github.com/2vg/CS2-FlexReservedSlots/releases/latest
