@@ -5,7 +5,7 @@
   Original was made by <a href="https://github.com/NockyCZ/CS2-ReservedSlots">NockyCZ/CS2-ReservedSlots</a> ♡<br>
 </p>
 
-> [!NOTE]:
+> [!NOTE]
 > This plugin Version 2.0.0 is not backward compatible with NockyCZ's versions. You will need to update your configuration file to the new format.  
 > And from this version, No longer supported Discord now.  
 
